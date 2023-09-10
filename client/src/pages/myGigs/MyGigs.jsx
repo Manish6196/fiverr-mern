@@ -1,48 +1,48 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./MyGigs.scss";
-import getCurrentUser from "../../utils/getCurrentUser";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import newRequest from "../../utils/newRequest";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import './MyGigs.scss'
+import getCurrentUser from '../../utils/getCurrentUser'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import newRequest from '../../utils/newRequest'
 
 function MyGigs() {
-  const currentUser = getCurrentUser();
+  const currentUser = getCurrentUser()
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["myGigs"],
+    queryKey: ['myGigs'],
     queryFn: () =>
-      newRequest.get(`/gigs?userId=${currentUser.id}`).then((res) => {
-        return res.data;
+      newRequest.get(`/gigs?userId=${currentUser.id}`).then(res => {
+        return res.data
       }),
-  });
+  })
 
   const mutation = useMutation({
-    mutationFn: (id) => {
-      return newRequest.delete(`/gigs/${id}`);
+    mutationFn: id => {
+      return newRequest.delete(`/gigs/${id}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["myGigs"]);
+      queryClient.invalidateQueries(['myGigs'])
     },
-  });
+  })
 
-  const handleDelete = (id) => {
-    mutation.mutate(id);
-  };
+  const handleDelete = id => {
+    mutation.mutate(id)
+  }
 
   return (
-    <div className="myGigs">
+    <div className='myGigs'>
       {isLoading ? (
-        "loading"
+        'loading'
       ) : error ? (
-        "error"
+        'error'
       ) : (
-        <div className="container">
-          <div className="title">
+        <div className='container'>
+          <div className='title'>
             <h1>Gigs</h1>
             {currentUser.isSeller && (
-              <Link to="/add">
+              <Link to='/add'>
                 <button>Add New Gig</button>
               </Link>
             )}
@@ -55,19 +55,19 @@ function MyGigs() {
               <th>Sales</th>
               <th>Action</th>
             </tr>
-            {data.map((gig) => (
+            {data.map(gig => (
               <tr key={gig._id}>
                 <td>
-                  <img className="image" src={gig.cover} alt="" />
+                  <img className='image' src={gig.cover} alt='' />
                 </td>
                 <td>{gig.title}</td>
                 <td>{gig.price}</td>
                 <td>{gig.sales}</td>
                 <td>
                   <img
-                    className="delete"
-                    src="./img/delete.png"
-                    alt=""
+                    className='delete'
+                    src='./img/delete.png'
+                    alt=''
                     onClick={() => handleDelete(gig._id)}
                   />
                 </td>
@@ -77,7 +77,7 @@ function MyGigs() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default MyGigs;
+export default MyGigs
